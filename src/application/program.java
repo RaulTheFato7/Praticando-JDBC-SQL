@@ -76,21 +76,38 @@ public class program {
                     int id = rs.getInt(1);
                     System.out.println("Sucess!! New seller with id insert: " + id);
                 }
-            } else {
-                System.out.println("No rows affected.");
+                DB.closeResultSet(rs);
             }
+            DB.closeStatement(ps);
+
+            System.out.println("\n=== 3. INCREMENT SALARY BY DEPARTMENT ===");
+            System.out.print("Enter Department Id: ");
+            int deptIdToUpdate = sc.nextInt();
+
+            System.out.print("Enter increment amount: ");
+            double increment = sc.nextDouble();
+
+            ps = conn.prepareStatement("UPDATE seller SET BaseSalary = BaseSalary + ? WHERE DepartmentId = ?");
+
+            ps.setDouble(1, increment);
+            ps.setInt(2, deptIdToUpdate);
+
+            rowsAffected = ps.executeUpdate();
+
+            System.out.println("Done! Rows affected: " + rowsAffected);
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
         catch (ParseException e) {
-            System.out.println("Date formatting error. Use the format dd/MM/yyyy.");;
+            e.printStackTrace();
         }
         finally {
             DB.closeResultSet(rs);
             DB.closeStatement(st);
             DB.closeStatement(ps);
             DB.closeConnection();
+            sc.close();
         }
     }
 }
